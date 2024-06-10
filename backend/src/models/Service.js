@@ -5,7 +5,7 @@ base de datos MongoDB, incluyendo campos como título, descripción, categoría
 
 const mongoose = require('mongoose')
 
-const serviceSchema = new mongoose.Schema({
+const ServiceSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true
@@ -52,7 +52,7 @@ const serviceSchema = new mongoose.Schema({
 // To do:  Crear un índice espacial para el campo de ubicación
 //          serviceSchema.index({ location: '2dsphere' });
 
-const Service = mongoose.model('Service', serviceSchema);
+const Service = mongoose.model('Service', ServiceSchema);
 
 module.exports = Service;
 

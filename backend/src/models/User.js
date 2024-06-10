@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 
 
 // Esquema para los elementos
-const userSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true
@@ -56,5 +56,5 @@ userSchema.methods.comparePassword = function(candidatePassword) {
 };
 
 
-module.exports = mongoose.models.User || mongoose.model('User', userSchema)
+module.exports = mongoose.models.User || mongoose.model('User', UserSchema)
 
