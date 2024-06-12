@@ -7,6 +7,8 @@ const userRoutes = require('./src/routes/userRoutes');
 const serviceRoutes = require('./src/routes/serviceRoutes');
 const categoryRoutes = require('./src/routes/categoryRoutes');
 const reviewRoutes = require('./src/routes/reviewRoutes');
+const authRoutes = require('./routes/authRoutes');
+const requestRoutes = require('./routes/requestRoutes');
 const config = require('./config');
 const PORT = process.env.PORT || 4000;
 const app = express();
@@ -49,6 +51,8 @@ app.use('/api/users', userRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/auths', authRoutes);
+app.use('/api/requests', requestRoutes);
 
 
 // Manejo de errores
