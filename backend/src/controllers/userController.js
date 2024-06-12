@@ -1,107 +1,82 @@
 const User = require('../models/User')
 
-// Controlador para obtener todos los usuarios
-exports.getAllUsers = async (req, res)=> {
-    try {
-        const users = await User.find();
-        res.json(users);
-      } catch (error) {
-        res.status(500).json({ message: error.message });
-      }
+// Controlador para crear un nuevo usuario
+exports.createUser = async (req, res) => {
+  try {
+      const newUser = new User(req.body);
+      await newUser.save();
+      res.status(201).json(newUser);
+  } catch (error) {
+      res.status(400).json({ message: error.message });
+  }
 };
 
-      
+// Controlador para obtener todos los usuarios
+exports.getAllUsers = async (req, res) => {
+  try {
+      const users = await User.find();
+      res.status(200).json(users);
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
+};
+
 // Controlador para obtener un usuario por su ID
 exports.getUserById = async (req, res) => {
-    try {
+  try {
       const user = await User.findById(req.params.id);
       if (!user) {
-        return res.status(404).json({ message: 'Usuario no encontrado' });
+          return res.status(404).json({ message: 'Usuario no encontrado' });
       }
-      res.json(user);
-    } catch (error) {
+      res.status(200).json(user);
+  } catch (error) {
       res.status(500).json({ message: error.message });
-    }
-  };
+  }
+};
 
-// Controlador para crear un nuevo usuario
-exports.registerUser = async (req, res, next) => {
-    try {
-        const { name, email, password, phoneNumber} = req.body;
-
-        // Verificar si el usuario ya existe
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: 'El usuario ya existe' });
-        }
-
-        // Crear nuevo usuario
-        const newUser = new User({
-            name,
-            email,
-            password,
-            phoneNumber
-        });
-
-        // Guardar el usuario en la base de datos
-        await newUser.save();
-
-        res.status(201).json({ message: 'Usuario registrado exitosamente' });
-    } catch (error) {
-        next(error);
-    }
-  };
- 
-// Controlador para actualizar un usuario
+// Controlador para actualizar un usuario por su ID (requiere autenticación)
 exports.updateUser = async (req, res) => {
-    try {
-      const user = await User.findById(req.params.id);
-      if (!user) {
-        return res.status(404).json({ message: 'Usuario no encontrado' });
+  try {
+      // Verificamos el token y obtenemos el ID del usuario
+      const userId = authService.verifyToken(req.headers.authorization);
+      if (!userId) {
+          return res.status(401).json({ message: 'Token inválido o no proporcionado' });
       }
-  
-      // Actualizar los campos del usuario si se proporcionan en la solicitud
-      if (req.body.name != null) {
-        user.name = req.body.name;
-      }
-      if (req.body.email != null) {
-        user.email = req.body.email;
-      }
-      if (req.body.password != null) {
-        user.password = req.body.password;
-      }
-      if (req.body.phoneNumber != null) {
-        user.phoneNumber = req.body.phoneNumber;
-      }
-      if (req.body.userType != null) {
-        user.userType = req.body.userType;
-      }
-      if (req.body.location != null) {
-        user.location = req.body.location;
-      }
-      if (req.body.profilePhoto != null) {
-        user.profilePhoto = req.body.profilePhoto;
-      }
-  
-      const updatedUser = await user.save();
-      res.json(updatedUser);
-    } catch (error) {
-      res.status(400).json({ message: error.message });
-    }
-  };
 
-// Controlador para eliminar un usuario
+      if (req.params.id !== userId) {
+          return res.status(403).json({ message: 'No tienes permiso para actualizar este usuario' });
+      }
+
+      const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+      if (!updatedUser) {
+          return res.status(404).json({ message: 'Usuario no encontrado' });
+      }
+      res.status(200).json(updatedUser);
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
+};
+
+// Controlador para eliminar un usuario por su ID (requiere autenticación)
 exports.deleteUser = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
-    if (!user) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
-    }
+      // Verificamos el token y obtenemos el ID del usuario
+      const userId = authService.verifyToken(req.headers.authorization);
+      if (!userId) {
+          return res.status(401).json({ message: 'Token inválido o no proporcionado' });
+      }
 
-    await user.remove();
-    res.json({ message: 'Usuario eliminado' });
+      if (req.params.id !== userId) {
+          return res.status(403).json({ message: 'No tienes permiso para eliminar este usuario' });
+      }
+
+      const deletedUser = await User.findByIdAndDelete(req.params.id);
+      if (!deletedUser) {
+          return res.status(404).json({ message: 'Usuario no encontrado' });
+      }
+      res.status(200).json({ message: 'Usuario eliminado correctamente' });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+      res.status(500).json({ message: error.message });
   }
 };
 
