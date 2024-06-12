@@ -1,11 +1,7 @@
-/* Este modelo define la estructura de datos de una reseña o
- calificación de un servicio en la base de datos MongoDB, incluyendo 
- campos como el texto de la reseña, la calificación numérica, el ID del 
- usuario que dejó la reseña, el ID del servicio al que se refiere la reseña, etc.*/
+// Importamos mongoose
+const mongoose = require('mongoose');
 
- const mongoose = require('mongoose');
-
-// Definimos el esquema de Reseña (ReviewSchema)
+// Definimos el esquema de Review
 const ReviewSchema = new mongoose.Schema({
   author: {
     id: {
@@ -39,4 +35,5 @@ const ReviewSchema = new mongoose.Schema({
   }
 });
 
+// Exportamos el modelo de Review
 module.exports = mongoose.model('Review', ReviewSchema);

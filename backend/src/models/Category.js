@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-// Definimos el esquema de Categoría (CategorySchema)
+// Definimos el esquema de Category
 const CategorySchema = new Schema({
     nombre: {
         type: String,
@@ -14,9 +14,9 @@ const CategorySchema = new Schema({
     },
     servicios: [{
         type: Schema.Types.ObjectId,
-        ref: 'Servicio'
+        ref: 'Service'
     }]
 });
 
-// Exportamos el modelo de Categoría
+// Exportamos el modelo de Category
 module.exports = mongoose.model('Category', CategorySchema);

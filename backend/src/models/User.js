@@ -1,8 +1,9 @@
+// Importamos mongoose y bcrypt
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 
-// Esquema para los elementos
+// Definimos el esquema de User
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -55,6 +56,6 @@ userSchema.methods.comparePassword = function(candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-
+// Exportamos el modelo de User
 module.exports = mongoose.models.User || mongoose.model('User', UserSchema)
 

@@ -1,10 +1,7 @@
-/* Este modelo define la estructura de datos de un servicio en la 
-base de datos MongoDB, incluyendo campos como título, descripción, categoría 
-(plomería, albañilería, enfermería, mecánica, etc.), precio, ubicación 
-(coordenadas geográficas), horario de disponibilidad, etc. */
-
+// Importamos mongoose
 const mongoose = require('mongoose')
 
+//Definimos el esquema Service
 const ServiceSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -54,6 +51,7 @@ const ServiceSchema = new mongoose.Schema({
 
 const Service = mongoose.model('Service', ServiceSchema);
 
+// Exportamos el modelo de Service
 module.exports = Service;
 
 
