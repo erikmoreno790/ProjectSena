@@ -5,20 +5,33 @@ const authService = require('../services/authService');
 // Controlador para crear un nuevo servicio
 exports.createService = async (req, res) => {
   try {
-    // Verificamos el token y obtenemos el ID del usuario
+    // Verificar el token y obtener el ID del usuario
     const userId = authService.verifyToken(req.headers.authorization);
     if (!userId) {
       return res.status(401).json({ message: 'Token inválido o no proporcionado' });
     }
 
+    const { title, description, category, price, location } = req.body;
+
+    // Crear el nuevo servicio
     const newService = new Service({
-      ...req.body,
-      supplier: userId
+      title,
+      description,
+      category,
+      price,
+      supplier: userId,
+      location: {
+        type: 'Point',
+        coordinates: location.split(',').map(Number)
+      }
     });
+
+    // Guardar el servicio en la base de datos
     await newService.save();
+
     res.status(201).json(newService);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -90,6 +103,34 @@ exports.deleteService = async (req, res) => {
 
     await Service.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: 'Servicio eliminado correctamente' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Controlador para buscar servicios cerca de su ubicación actual, filtrando por categoría y precio.
+exports.searchServices = async (req, res) => {
+  try {
+    const { location, category, minPrice, maxPrice } = req.query;
+
+    // Construir el filtro de búsqueda
+    const filter = {};
+    if (category) filter.category = category;
+    if (minPrice || maxPrice) filter.price = {};
+    if (minPrice) filter.price.$gte = minPrice;
+    if (maxPrice) filter.price.$lte = maxPrice;
+    if (location) {
+      filter.location = {
+        $near: {
+          $geometry: { type: 'Point', coordinates: location.split(',').map(Number) },
+          $maxDistance: 5000 // 5 km de radio
+        }
+      };
+    }
+
+    // Buscar servicios en la base de datos
+    const services = await Service.find(filter).populate('supplier');
+    res.status(200).json(services);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
