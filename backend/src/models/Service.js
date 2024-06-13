@@ -1,8 +1,9 @@
 // Importamos mongoose
 const mongoose = require('mongoose')
+const Schema = mongoose.Schema;
 
 //Definimos el esquema Service
-const ServiceSchema = new mongoose.Schema({
+const ServiceSchema = new Schema({
   title: {
     type: String,
     required: true
@@ -12,7 +13,8 @@ const ServiceSchema = new mongoose.Schema({
     required: true
   },
   category: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: 'Category', // Referencia al modelo Category
     required: true
   },
   price: {
