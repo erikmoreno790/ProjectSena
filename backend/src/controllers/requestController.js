@@ -1,12 +1,21 @@
 const Request = require('../models/Request');
 const Service = require('../models/Service');
+const authService = require('../services/authService');
 
 exports.requestService = async (req, res) => {
   try {
+    // Extraer el token del encabezado de autorización
+    const token = authService.extractToken(req)
+
+    if (!token) {
+      return res.status(401).json({ message: 'Token no proporcionado' });
+    }
+
     // Verificar el token y obtener el ID del usuario
-    const userId = authService.verifyToken(req.headers.authorization);
+    const userId = authService.verifyToken(token);
     if (!userId) {
-      return res.status(401).json({ message: 'Token inválido o no proporcionado' });
+      console.log('UserId:', userId);  // Línea de depuración
+      return res.status(401).json({ message: 'Token inválido' });
     }
 
     const { date } = req.body;

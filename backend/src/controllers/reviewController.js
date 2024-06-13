@@ -5,17 +5,24 @@ const authService = require('../services/authService');
 // Controlador para crear una nueva reseña
 exports.createReview = async (req, res) => {
   try {
-    // Verificamos el token y obtenemos el ID del usuario
-    const userId = authService.verifyToken(req.headers.authorization);
+    // Extraer el token del encabezado de autorización
+    const token = authService.extractToken(req)
+
+    if (!token) {
+      return res.status(401).json({ message: 'Token no proporcionado' });
+    }
+
+    // Verificar el token y obtener el ID del usuario
+    const userId = authService.verifyToken(token);
     if (!userId) {
-      return res.status(401).json({ message: 'Token inválido o no proporcionado' });
+      console.log('UserId:', userId);  // Línea de depuración
+      return res.status(401).json({ message: 'Token inválido' });
     }
 
     const newReview = new Review({
       ...req.body,
       author: {
-        id: userId,
-        name: req.body.authorName // Asegurarse de que el nombre del autor se pase en el cuerpo de la solicitud
+        id: userId
       }
     });
     await newReview.save();

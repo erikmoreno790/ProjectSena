@@ -5,13 +5,31 @@ const authService = require('../services/authService');
 // Controlador para crear un nuevo servicio
 exports.createService = async (req, res) => {
   try {
-    // Verificar el token y obtener el ID del usuario
-    const userId = authService.verifyToken(req.headers.authorization);
-    if (!userId) {
-      return res.status(401).json({ message: 'Token inválido o no proporcionado' });
+    // Extraer el token del encabezado de autorización
+    const token = authService.extractToken(req)
+
+    if (!token) {
+      return res.status(401).json({ message: 'Token no proporcionado' });
     }
 
-    const { title, description, category, price, location } = req.body;
+    // Verificar el token y obtener el ID del usuario
+    const userId = authService.verifyToken(token);
+    if (!userId) {
+      console.log('UserId:', userId);  // Línea de depuración
+      return res.status(401).json({ message: 'Token inválido' });
+    }
+
+    const { title, description, category, price, location, status, date } = req.body;
+
+    // Validar que location es un objeto con type y coordinates
+    if (typeof location !== 'object' || location.type !== 'Point' || !Array.isArray(location.coordinates)) {
+      return res.status(400).json({ message: 'El campo location debe ser un objeto con type "Point" y un array de coordinates' });
+    }
+
+    // Validar que coordinates contiene dos números
+    if (location.coordinates.length !== 2 || location.coordinates.some(isNaN)) {
+      return res.status(400).json({ message: 'El campo coordinates debe contener dos números' });
+    }
 
     // Crear el nuevo servicio
     const newService = new Service({
@@ -19,11 +37,10 @@ exports.createService = async (req, res) => {
       description,
       category,
       price,
-      supplier: userId,
-      location: {
-        type: 'Point',
-        coordinates: location.split(',').map(Number)
-      }
+      supplier: userId,  // Asociar el servicio al usuario autenticado
+      location,
+      status,
+      date
     });
 
     // Guardar el servicio en la base de datos
