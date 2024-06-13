@@ -1,10 +1,10 @@
 // Importamos mongoose y bcrypt
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-
+const Schema = mongoose.Schema;
 
 // Definimos el esquema de User
-const UserSchema = new mongoose.Schema({
+const UserSchema = new Schema({
   name: {
     type: String,
     required: true
@@ -49,10 +49,10 @@ const UserSchema = new mongoose.Schema({
 });
 
 //Índice espacial para el campo de ubicación
-userSchema.index({location:'2dsphere'})
+UserSchema.index({location:'2dsphere'})
 
 // Método para comparar la contraseña ingresada con la contraseña almacenada en la base de datos
-userSchema.methods.comparePassword = function(candidatePassword) {
+UserSchema.methods.comparePassword = function(candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
