@@ -3,8 +3,8 @@ const router = express.Router();
 const categoryController = require('../controllers/categoryController');
 const authService = require('../services/authService');
 
-// Ruta para crear una nueva categoría (protegida)
-router.post('/', authService.verifyTokenMiddleware, categoryController.createCategory);
+// Ruta para crear una nueva categoría (pública)
+router.post('/', categoryController.createCategory);
 
 // Ruta para obtener todas las categorías (pública)
 router.get('/', categoryController.getAllCategories);

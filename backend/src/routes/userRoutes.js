@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
+const authService= require('../services/authService');
 
 // Ruta para crear un nuevo usuario (pública)
 router.post('/', userController.createUser);
