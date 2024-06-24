@@ -6,7 +6,8 @@ const authService = require('../services/authService');
 // Ruta para obtener todas las solicitudes (opcional, protegida)
 router.get('/', authService.verifyTokenMiddleware, requestController.getAllRequests);
 
-router.get('/requests', authService.verifyTokenMiddleware, requestController.getRequestsByUser);
+// Ruta para obtener las solicitudes por usuario
+router.get('/user/requests', authService.verifyTokenMiddleware, requestController.getRequestsByUser);
 
 // Ruta para actualizar el estado de una solicitud (protegida)
 router.put('/:id', authService.verifyTokenMiddleware, requestController.updateRequestStatus);
@@ -16,5 +17,8 @@ router.put('/:id/confirm', authService.verifyTokenMiddleware, requestController.
 
 // Ruta para completar una solicitud (protegida)
 router.put('/:id/complete', authService.verifyTokenMiddleware, requestController.completeRequest);
+
+//Ruta para obtener los servicios contratados por usuario
+router.get('/user/services', authService.verifyTokenMiddleware, requestController.getServicesByUserId);
 
 module.exports = router;
