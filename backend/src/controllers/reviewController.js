@@ -55,6 +55,16 @@ exports.getReviewById = async (req, res) => {
   }
 };
 
+// Controlador para obtener reseñas por ID de servicio
+exports.getReviewsByServiceId = async (req, res) => {
+  try {
+    const reviews = await Review.find({ service: req.params.serviceId }).populate('author.id', 'name');
+    res.status(200).json(reviews);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Controlador para actualizar una reseña por su ID (requiere autenticación)
 exports.updateReview = async (req, res) => {
   try {
