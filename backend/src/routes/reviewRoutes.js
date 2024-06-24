@@ -12,6 +12,9 @@ router.get('/', reviewController.getAllReviews);
 // Ruta para obtener una reseña por su ID (pública)
 router.get('/:id', reviewController.getReviewById);
 
+// Obtener reseñas por ID de servicio
+router.get('/service/:serviceId', reviewController.getReviewsByServiceId);
+
 // Ruta para actualizar una reseña por su ID (protegida)
 router.put('/:id', authService.verifyTokenMiddleware, reviewController.updateReview);
 
