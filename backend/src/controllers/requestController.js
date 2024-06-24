@@ -57,7 +57,7 @@ exports.getAllRequests = async (req, res) => {
   }
 };
 
-// Función para obtener una solicitud por usuario
+// Función para obtener solicitudes por usuario
 exports.getRequestsByUser = async (req, res) => {
   try {
     const userId = req.userId;
@@ -152,6 +152,16 @@ exports.completeRequest = async (req, res) => {
     // Aquí solo devolvemos la respuesta
 
     res.status(200).json(request);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Controlador para obtener servicios contratados por usuario
+exports.getServicesByUserId = async (req, res) => {
+  try {
+    const services = await Service.find({ supplier: req.userId });
+    res.status(200).json(services);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
