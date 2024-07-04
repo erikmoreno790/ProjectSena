@@ -21,16 +21,6 @@ exports.createService = async (req, res) => {
 
     const { title, description, category, price, location, status, date } = req.body;
 
-    // Validar que location es un objeto con type y coordinates
-    if (typeof location !== 'object' || location.type !== 'Point' || !Array.isArray(location.coordinates)) {
-      return res.status(400).json({ message: 'El campo location debe ser un objeto con type "Point" y un array de coordinates' });
-    }
-
-    // Validar que coordinates contiene dos números
-    if (location.coordinates.length !== 2 || location.coordinates.some(isNaN)) {
-      return res.status(400).json({ message: 'El campo coordinates debe contener dos números' });
-    }
-
     // Crear el nuevo servicio
     const newService = new Service({
       title,
