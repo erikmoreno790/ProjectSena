@@ -30,11 +30,19 @@ const ServiceSchema = new Schema({
     type: {
       type: String,
       enum: ['Point'],
-      default: 'Point'
+      default: 'Point',
+      required: false
     },
     coordinates: {
       type: [Number],
-      required: false
+      default: [0, 0],
+      required: false,
+      validate: {
+        validator: function(v) {
+          return Array.isArray(v) && v.length === 2;
+        },
+        message: props => `${props.value} debe ser un array de dos números [longitude, latitude]`
+      }
     }
   },
   status: { 
@@ -46,6 +54,16 @@ const ServiceSchema = new Schema({
     type: Date,
     default: Date.now
 }
+});
+
+ServiceSchema.pre('save', function(next) {
+  if (!this.location || !this.location.coordinates || this.location.coordinates.length !== 2) {
+    this.location = {
+      type: 'Point',
+      coordinates: [0, 0]
+    };
+  }
+  next();
 });
 
 // To do:  Crear un índice espacial para el campo de ubicación
