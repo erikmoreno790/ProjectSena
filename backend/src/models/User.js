@@ -31,11 +31,13 @@ const UserSchema = new Schema({
     type: {
       type: String,
       enum: ['Point'],
-      default: 'Point'
+      default: 'Point',
+      required: false
     },
     coordinates: {
       type: [Number],
-      required: false
+      required: false,
+      default: [0, 0]
     }
   },
   profilePhoto: {
